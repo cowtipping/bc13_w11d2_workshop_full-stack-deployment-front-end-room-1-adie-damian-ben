@@ -8,7 +8,7 @@ and clear all of the items in a list.
 2. In order for the components to interact with one another, some functionality will need to be hoisted into the App component
  */
 
-const url = process.env.REACT_APP_BACKEND_URL ?? "http://localhost:3000";
+const url = process.env.REACT_APP_BACKEND_URL ?? "http://localhost:8000";
 
 function App() {
   const [list, setList] = useState([]);
@@ -18,7 +18,6 @@ function App() {
     async function getShoppingList() {
       const response = await fetch(`${url}/items`);
       const data = await response.json(response);
-      console.log(data);
       setList(data.payload);
     }
     getShoppingList();
@@ -54,13 +53,7 @@ function App() {
     setList(clearedList);
   }
 
-  async function tickItem(idOfTickedItem) {
-    const response = await fetch(`{url}/items`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ listItem: idOfTickedItem })
-    })
-
+  async function tickItem(idOfTickedItem) {   
     setList((previous) => {
       return previous.map((item) => {
         return item.id !== idOfTickedItem
@@ -68,6 +61,15 @@ function App() {
           : { ...item, completed: !item.completed };
       });
     });
+    const response = await fetch(`${url}/items/${idOfTickedItem}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ listItem: idOfTickedItem })
+    })
+    const data = await response.json();
+    const foo = await data.payload;
+
+    console.log(foo)
   }
 
   return (
